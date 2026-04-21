@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BLS Contractor Matching Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--nav:#003169;--stl:#AFB9CC;--std:#6881AC;--cor:#FE502D;--chr:#232937;--owh:#F1F3F5;--lgr:#E7E7E7;--wht:#FFFFFF;--grn:#0F6E56;--grn-l:#EAF3DE;--amb:#BA7517;--amb-l:#FAEEDA;--red:#A32D2D;--red-l:#FCEBEB;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Roboto',sans-serif;background:var(--owh);color:var(--chr);min-height:100vh;}
+.topbar{background:var(--nav);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-logo{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:40px;height:40px;border-radius:50%;background:var(--stl);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-mark svg{width:22px;height:22px;}
+.logo-text{display:flex;flex-direction:column;line-height:1;}
+.logo-name{font-weight:500;font-size:13px;letter-spacing:.15em;color:#fff;text-transform:uppercase;}
+.logo-sub{font-weight:300;font-size:10px;letter-spacing:.1em;color:var(--stl);text-transform:uppercase;margin-top:2px;}
+.topbar-tool{font-size:12px;color:var(--stl);letter-spacing:.08em;text-transform:uppercase;}
+.app{max-width:860px;margin:0 auto;padding:24px 20px 60px;}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--lgr);margin-bottom:20px;}
+.tab{padding:10px 20px;font-size:13px;cursor:pointer;color:#888;border-bottom:3px solid transparent;margin-bottom:-2px;font-weight:400;transition:all .15s;}
+.tab.active{color:var(--nav);border-bottom-color:var(--nav);font-weight:500;}
+.tab:hover:not(.active){color:var(--nav);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.card{background:var(--wht);border:1px solid var(--lgr);border-radius:4px;padding:20px;margin-bottom:14px;}
+.card-title{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--nav);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--lgr);display:flex;align-items:center;gap:10px;}
+.card-title::before{content:'';display:inline-block;width:3px;height:16px;background:var(--cor);border-radius:1px;flex-shrink:0;}
+.sl{font-size:10px;font-weight:500;color:var(--std);text-transform:uppercase;letter-spacing:.12em;margin:14px 0 8px;}
+.sl:first-child{margin-top:0;}
+.fr{display:grid;gap:12px;margin-bottom:12px;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+label{font-size:11px;color:var(--chr);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;font-weight:500;}
+input,select,textarea{width:100%;font-size:13px;padding:9px 12px;border:1px solid var(--lgr);border-radius:3px;background:var(--wht);color:var(--chr);font-family:'Roboto',sans-serif;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--nav);}
+textarea{resize:vertical;min-height:70px;}
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:4px;}
+.time-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px;}
+.tog{padding:7px 4px;font-size:11px;text-align:center;border-radius:3px;border:1px solid var(--lgr);cursor:pointer;color:#888;background:var(--wht);user-select:none;transition:all .12s;}
+.tog:hover{border-color:var(--nav);color:var(--nav);}
+.tog.on{background:var(--nav);color:#fff;border-color:var(--nav);}
+.tog.child-on{background:var(--std);color:#fff;border-color:var(--std);}
+.pill-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.pill{padding:6px 14px;font-size:12px;border-radius:3px;border:1px solid var(--lgr);cursor:pointer;color:var(--chr);background:var(--wht);user-select:none;transition:all .12s;}
+.pill:hover{border-color:var(--nav);}
+.pill.on{background:var(--nav);color:#fff;border-color:var(--nav);}
+.btn{padding:9px 20px;font-size:12px;cursor:pointer;font-weight:500;transition:all .15s;letter-spacing:.06em;text-transform:uppercase;font-family:'Roboto',sans-serif;border-radius:3px;border:none;}
+.btn-primary{background:var(--nav);color:#fff;}
+.btn-primary:hover{background:var(--chr);}
+.btn-ghost{background:transparent;color:var(--nav);border:1px solid var(--nav)!important;}
+.btn-ghost:hover{background:var(--nav);color:#fff;}
+.btn-danger{background:transparent;color:var(--red);border:1px solid var(--lgr)!important;font-size:11px;padding:5px 12px;}
+.btn-danger:hover{background:var(--red-l);border-color:var(--red)!important;}
+.btn-row{display:flex;gap:8px;margin-top:12px;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat{background:var(--wht);border:1px solid var(--lgr);border-radius:4px;padding:14px;text-align:center;}
+.stat-n{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:400;color:var(--nav);}
+.stat-l{font-size:11px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+.divider{height:1px;background:var(--lgr);margin:14px 0;}
+.contractor-card{background:var(--wht);border:1px solid var(--lgr);border-radius:4px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;transition:border-color .15s;}
+.contractor-card:hover{border-color:var(--std);}
+.contractor-card.match-strong{border-left:3px solid var(--grn);}
+.contractor-card.match-partial{border-left:3px solid var(--amb);}
+.contractor-card.no-match{opacity:.4;}
+.c-name{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--nav);}
+.c-meta{font-size:12px;color:#888;margin-top:3px;}
+.c-avail{font-size:11px;color:#888;margin-top:4px;line-height:1.6;}
+.c-overlap{font-size:11px;color:var(--grn);margin-top:4px;font-weight:500;}
+.match-score{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:400;min-width:46px;text-align:right;}
+.score-strong{color:var(--grn);}
+.score-partial{color:var(--amb);}
+.section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin:.75rem 0 6px;padding:4px 8px;border-radius:3px;}
+.label-strong{background:var(--grn-l);color:var(--grn);}
+.label-partial{background:var(--amb-l);color:var(--amb);}
+.label-none{background:var(--owh);color:#888;}
+.save-msg{font-size:13px;color:var(--grn);margin-top:8px;display:none;}
+.empty{text-align:center;padding:40px 20px;color:#888;font-size:13px;}
+.info-box{background:#EEF3FB;border:1px solid #C5D3E8;border-left:3px solid var(--nav);padding:10px 14px;font-size:12px;color:var(--nav);line-height:1.6;margin-bottom:12px;border-radius:3px;}
+.contact-links{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
+.contact-links a{font-size:11px;color:var(--nav);text-decoration:none;}
+.contact-links a:hover{text-decoration:underline;}
+.search-bar{display:flex;gap:8px;margin-bottom:12px;}
+.search-bar input{flex:1;}
+@media(max-width:600px){.c2,.c3,.stat-row{grid-template-columns:1fr;}.day-grid{grid-template-columns:repeat(4,1fr);}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#AFB9CC" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/><path d="M14 10 Q14 20 20 20 Q14 20 14 30" stroke="#003169" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M14 10 Q26 10 26 16 Q26 20 20 20" stroke="#003169" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M20 20 Q28 20 28 25 Q28 30 14 30" stroke="#003169" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-name">Benson</span>
+      <span class="logo-sub">Legal Services</span>
+    </div>
+  </div>
+  <div class="topbar-tool">Contractor Matching Tool</div>
+</div>
+
+<div class="app">
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('match')">Find a Match</div>
+  <div class="tab" onclick="showTab('contractors')">Contractors</div>
+  <div class="tab" onclick="showTab('add')">Add Contractor</div>
+</div>
+
+<!-- TAB: MATCH -->
+<div id="tab-match" class="tab-content active">
+  <div class="card">
+    <div class="card-title">Client needs</div>
+    <div class="fr c2">
+      <div><label>Client name</label><input type="text" id="m-name" placeholder="e.g. Jane Smith"/></div>
+      <div><label>Service type</label>
+        <select id="m-svc">
+          <option value="">-- Select --</option>
+          <option>Supervised Visits</option>
+          <option>Therapeutic Supervised Visits</option>
+          <option>Custody Exchange Support</option>
+          <option>Home Study</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr c2">
+      <div><label>Visit location / county</label><input type="text" id="m-loc" placeholder="e.g. York County"/></div>
+      <div><label>Court / Docket number</label><input type="text" id="m-docket" placeholder="Optional"/></div>
+    </div>
+    <div class="sl">Client available days</div>
+    <div class="day-grid" id="m-days">
+      <div class="tog" onclick="tog(this,'on')">Sun</div>
+      <div class="tog" onclick="tog(this,'on')">Mon</div>
+      <div class="tog" onclick="tog(this,'on')">Tue</div>
+      <div class="tog" onclick="tog(this,'on')">Wed</div>
+      <div class="tog" onclick="tog(this,'on')">Thu</div>
+      <div class="tog" onclick="tog(this,'on')">Fri</div>
+      <div class="tog" onclick="tog(this,'on')">Sat</div>
+    </div>
+    <div class="sl">Client available times</div>
+    <div class="time-grid" id="m-times">
+      <div class="tog" onclick="tog(this,'on')">Morning (8am-12pm)</div>
+      <div class="tog" onclick="tog(this,'on')">Afternoon (12pm-5pm)</div>
+      <div class="tog" onclick="tog(this,'on')">Evening (5pm-8pm)</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runMatch()">Find Matches</button>
+      <button class="btn btn-ghost" onclick="clearMatch()">Clear</button>
+    </div>
+  </div>
+  <div id="match-results"></div>
+</div>
+
+<!-- TAB: CONTRACTORS -->
+<div id="tab-contractors" class="tab-content">
+  <div class="stat-row">
+    <div class="stat"><div class="stat-n" id="st-total">0</div><div class="stat-l">Total contractors</div></div>
+    <div class="stat"><div class="stat-n" id="st-sv">0</div><div class="stat-l">Supervised visits</div></div>
+    <div class="stat"><div class="stat-n" id="st-ts">0</div><div class="stat-l">Therapeutic</div></div>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="c-search" placeholder="Search by name, role, or county..." oninput="renderContractors()"/>
+  </div>
+  <div id="contractor-list"><div class="empty">No contractors added yet. Go to Add Contractor to get started.</div></div>
+</div>
+
+<!-- TAB: ADD CONTRACTOR -->
+<div id="tab-add" class="tab-content">
+  <div class="card">
+    <div class="card-title" id="add-title">New contractor</div>
+    <input type="hidden" id="edit-id"/>
+    <div class="fr c2">
+      <div><label>First name *</label><input type="text" id="c-fn" placeholder="First name"/></div>
+      <div><label>Last name *</label><input type="text" id="c-ln" placeholder="Last name"/></div>
+    </div>
+    <div class="fr c2">
+      <div><label>Email *</label><input type="email" id="c-em" placeholder="email@example.com"/></div>
+      <div><label>Phone</label><input type="tel" id="c-ph" placeholder="(555) 000-0000"/></div>
+    </div>
+    <div class="fr c3">
+      <div><label>Credentials</label><input type="text" id="c-cr" placeholder="e.g. MSW, LSW"/></div>
+      <div><label>Home county</label><input type="text" id="c-co" placeholder="e.g. York County"/></div>
+      <div><label>Max travel (miles)</label><input type="number" id="c-mi" placeholder="25" min="0"/></div>
+    </div>
+    <div class="fr c2">
+      <div><label>Transportation</label>
+        <select id="c-tr"><option>Own vehicle</option><option>Public transit</option><option>Both</option></select>
+      </div>
+      <div><label>Status</label>
+        <select id="c-st"><option>Active</option><option>Pending review</option><option>Inactive</option></select>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="sl" style="margin-top:0;">Roles</div>
+    <div class="pill-wrap" id="c-roles">
+      <div class="pill" onclick="this.classList.toggle('on')">Supervised Visitation Monitor</div>
+      <div class="pill" onclick="this.classList.toggle('on')">Therapeutic Visitation Supervisor</div>
+      <div class="pill" onclick="this.classList.toggle('on')">Custody Exchange Monitor</div>
+      <div class="pill" onclick="this.classList.toggle('on')">Home Study Evaluator</div>
+    </div>
+    <div class="sl">Available days</div>
+    <div class="day-grid" id="c-days">
+      <div class="tog" onclick="tog(this,'on')">Sun</div>
+      <div class="tog" onclick="tog(this,'on')">Mon</div>
+      <div class="tog" onclick="tog(this,'on')">Tue</div>
+      <div class="tog" onclick="tog(this,'on')">Wed</div>
+      <div class="tog" onclick="tog(this,'on')">Thu</div>
+      <div class="tog" onclick="tog(this,'on')">Fri</div>
+      <div class="tog" onclick="tog(this,'on')">Sat</div>
+    </div>
+    <div class="sl">Available times</div>
+    <div class="time-grid" id="c-times">
+      <div class="tog" onclick="tog(this,'on')">Morning (8am-12pm)</div>
+      <div class="tog" onclick="tog(this,'on')">Afternoon (12pm-5pm)</div>
+      <div class="tog" onclick="tog(this,'on')">Evening (5pm-8pm)</div>
+    </div>
+    <div class="sl">Notes</div>
+    <textarea id="c-notes" placeholder="Scheduling restrictions, specializations, languages spoken, any relevant notes..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveContractor()">Save Contractor</button>
+      <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+    </div>
+    <div class="save-msg" id="save-msg"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var contractors = [];
+try { var s = localStorage.getItem('bls_contractors_v2'); if(s) contractors = JSON.parse(s); } catch(e){}
+
+function persist() {
+  try { localStorage.setItem('bls_contractors_v2', JSON.stringify(contractors)); } catch(e){}
+}
+
+function showTab(t) {
+  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('tab-'+t).classList.add('active');
+  var tabs = ['match','contractors','add'];
+  document.querySelectorAll('.tab')[tabs.indexOf(t)].classList.add('active');
+  if(t==='contractors'){ updateStats(); renderContractors(); }
+}
+
+function tog(el, cls) { el.classList.toggle(cls); }
+
+function getSel(cid, cls) {
+  return Array.from(document.querySelectorAll('#'+cid+' .'+cls)).map(function(e){ return e.textContent.trim(); });
+}
+
+function clearForm() {
+  ['c-fn','c-ln','c-em','c-ph','c-cr','c-co','c-mi','c-notes'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('edit-id').value = '';
+  document.getElementById('add-title').textContent = 'New contractor';
+  document.getElementById('c-tr').value = 'Own vehicle';
+  document.getElementById('c-st').value = 'Active';
+  document.querySelectorAll('#c-roles .pill').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('#c-days .tog, #c-times .tog').forEach(function(t){ t.classList.remove('on'); });
+  document.getElementById('save-msg').style.display = 'none';
+}
+
+function saveContractor() {
+  var fn = document.getElementById('c-fn').value.trim();
+  var ln = document.getElementById('c-ln').value.trim();
+  var em = document.getElementById('c-em').value.trim();
+  if(!fn||!ln||!em){ alert('First name, last name, and email are required.'); return; }
+  var roles = getSel('c-roles','on');
+  var days  = getSel('c-days','on');
+  var times = getSel('c-times','on');
+  var editId = document.getElementById('edit-id').value;
+  var c = {
+    id: editId || Date.now().toString(),
+    fn:fn, ln:ln, em:em,
+    ph: document.getElementById('c-ph').value.trim(),
+    cr: document.getElementById('c-cr').value.trim(),
+    co: document.getElementById('c-co').value.trim(),
+    mi: parseInt(document.getElementById('c-mi').value)||0,
+    tr: document.getElementById('c-tr').value,
+    status: document.getElementById('c-st').value,
+    roles:roles, days:days, times:times,
+    notes: document.getElementById('c-notes').value.trim()
+  };
+  if(editId) {
+    var idx = contractors.findIndex(function(x){ return x.id===editId; });
+    if(idx>-1) contractors[idx]=c; else contractors.push(c);
+  } else {
+    contractors.push(c);
+  }
+  persist();
+  clearForm();
+  var msg = document.getElementById('save-msg');
+  msg.textContent = (editId?'Updated: ':'Saved: ') + fn + ' ' + ln;
+  msg.style.display = 'block';
+  setTimeout(function(){ msg.style.display='none'; }, 3000);
+}
+
+function editContractor(id) {
+  var c = contractors.find(function(x){ return x.id===id; });
+  if(!c) return;
+  document.getElementById('c-fn').value = c.fn;
+  document.getElementById('c-ln').value = c.ln;
+  document.getElementById('c-em').value = c.em;
+  document.getElementById('c-ph').value = c.ph||'';
+  document.getElementById('c-cr').value = c.cr||'';
+  document.getElementById('c-co').value = c.co||'';
+  document.getElementById('c-mi').value = c.mi||'';
+  document.getElementById('c-tr').value = c.tr||'Own vehicle';
+  document.getElementById('c-st').value = c.status||'Active';
+  document.getElementById('c-notes').value = c.notes||'';
+  document.getElementById('edit-id').value = c.id;
+  document.getElementById('add-title').textContent = 'Edit: ' + c.fn + ' ' + c.ln;
+  document.querySelectorAll('#c-roles .pill').forEach(function(p){ p.classList.toggle('on', c.roles&&c.roles.includes(p.textContent.trim())); });
+  document.querySelectorAll('#c-days .tog').forEach(function(t){ t.classList.toggle('on', c.days&&c.days.includes(t.textContent.trim())); });
+  document.querySelectorAll('#c-times .tog').forEach(function(t){ t.classList.toggle('on', c.times&&c.times.includes(t.textContent.trim())); });
+  showTab('add');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function deleteContractor(id) {
+  if(!confirm('Remove this contractor from the system?')) return;
+  contractors = contractors.filter(function(c){ return c.id!==id; });
+  persist(); updateStats(); renderContractors();
+}
+
+function updateStats() {
+  document.getElementById('st-total').textContent = contractors.filter(function(c){ return c.status!=='Inactive'; }).length;
+  document.getElementById('st-sv').textContent = contractors.filter(function(c){ return c.status!=='Inactive' && c.roles && c.roles.some(function(r){ return r.includes('Supervised Visitation'); }); }).length;
+  document.getElementById('st-ts').textContent = contractors.filter(function(c){ return c.status!=='Inactive' && c.roles && c.roles.some(function(r){ return r.includes('Therapeutic'); }); }).length;
+}
+
+function renderContractors() {
+  var el = document.getElementById('contractor-list');
+  var q = (document.getElementById('c-search')||{}).value||'';
+  var list = contractors;
+  if(q) {
+    var ql = q.toLowerCase();
+    list = list.filter(function(c){
+      return (c.fn+' '+c.ln+' '+(c.cr||'')+' '+(c.co||'')+' '+(c.roles||[]).join(' ')).toLowerCase().includes(ql);
+    });
+  }
+  if(!list.length) { el.innerHTML = '<div class="empty">'+(q?'No contractors match that search.':'No contractors added yet.')+'</div>'; return; }
+  el.innerHTML = list.map(function(c) {
+    var statusColor = c.status==='Active'?'color:#3B6D11;':c.status==='Pending review'?'color:#854F0B;':'color:#888;';
+    return '<div class="contractor-card">' +
+      '<div style="flex:1;">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<div class="c-name">'+c.fn+' '+c.ln+'</div>' +
+          '<span style="font-size:11px;'+statusColor+'">'+c.status+'</span>' +
+        '</div>' +
+        '<div class="c-meta">'+(c.cr||'No credentials')+' &bull; '+(c.co||'County not set')+(c.mi?' &bull; Up to '+c.mi+' mi':''+'</div>') +
+        '<div class="c-avail">Roles: '+(c.roles&&c.roles.length?c.roles.join(', '):'None set')+'</div>' +
+        '<div class="c-avail">Days: '+(c.days&&c.days.length?c.days.join(', '):'None')+'</div>' +
+        '<div class="c-avail">Times: '+(c.times&&c.times.length?c.times.join(', '):'None')+'</div>' +
+        (c.notes?'<div class="c-avail" style="font-style:italic;margin-top:3px;">'+c.notes+'</div>':'')+
+        '<div class="contact-links">' +
+          (c.ph?'<a href="tel:'+c.ph+'">'+c.ph+'</a>':'')+
+          (c.em?'<a href="mailto:'+c.em+'">'+c.em+'</a>':'')+
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;flex-shrink:0;">' +
+        '<button class="btn btn-ghost" style="font-size:11px;padding:5px 12px;" onclick="editContractor(\''+c.id+'\')">Edit</button>' +
+        '<button class="btn btn-danger" onclick="deleteContractor(\''+c.id+'\')">Remove</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function roleMatchesSvc(roles, svc) {
+  if(!svc||!roles||!roles.length) return true;
+  var map = {'Supervised Visits':'Supervised Visitation Monitor','Therapeutic Supervised Visits':'Therapeutic Visitation Supervisor','Custody Exchange Support':'Custody Exchange Monitor','Home Study':'Home Study Evaluator'};
+  var needed = map[svc];
+  return !needed || roles.includes(needed);
+}
+
+function scoreContractor(c, cDays, cTimes, svc) {
+  var score = 0;
+  var roleMatch = roleMatchesSvc(c.roles, svc);
+  if(roleMatch) score += 40;
+  var dayOv = cDays.filter(function(d){ return c.days&&c.days.includes(d); });
+  if(dayOv.length) score += Math.min(dayOv.length*10, 30);
+  var timeOv = cTimes.filter(function(t){ return c.times&&c.times.includes(t); });
+  if(timeOv.length) score += 20;
+  if(c.status==='Inactive') score = 0;
+  if(c.status==='Pending review') score = Math.floor(score*0.5);
+  return {score:score, roleMatch:roleMatch, dayOv:dayOv, timeOv:timeOv};
+}
+
+function runMatch() {
+  var name = document.getElementById('m-name').value.trim();
+  var svc  = document.getElementById('m-svc').value;
+  var loc  = document.getElementById('m-loc').value.trim();
+  var cDays  = getSel('m-days','on');
+  var cTimes = getSel('m-times','on');
+
+  if(!contractors.length) {
+    document.getElementById('match-results').innerHTML = '<div class="card"><div class="empty">No contractors in the system yet. Add contractors first using the Add Contractor tab.</div></div>';
+    return;
+  }
+
+  var scored = contractors.map(function(c){
+    var s = scoreContractor(c, cDays, cTimes, svc);
+    return {c:c, score:s.score, roleMatch:s.roleMatch, dayOv:s.dayOv, timeOv:s.timeOv};
+  }).sort(function(a,b){ return b.score-a.score; });
+
+  var strong  = scored.filter(function(x){ return x.score>=70; });
+  var partial = scored.filter(function(x){ return x.score>=25&&x.score<70; });
+  var none    = scored.filter(function(x){ return x.score<25; });
+
+  var html = '';
+  if(name||svc||loc) {
+    html += '<div style="font-size:13px;color:#888;margin-bottom:10px;">Results for';
+    if(name) html += ' <strong style="color:var(--chr);">'+name+'</strong>';
+    if(svc)  html += ' &mdash; <strong style="color:var(--chr);">'+svc+'</strong>';
+    if(loc)  html += ' &mdash; '+loc;
+    html += '</div>';
+  }
+
+  if(strong.length) {
+    html += '<div class="section-label label-strong">Strong matches ('+strong.length+')</div>';
+    strong.forEach(function(x){ html += mkCard(x,'match-strong','score-strong'); });
+  }
+  if(partial.length) {
+    html += '<div class="section-label label-partial" style="margin-top:10px;">Partial matches ('+partial.length+')</div>';
+    partial.forEach(function(x){ html += mkCard(x,'match-partial','score-partial'); });
+  }
+  if(none.length) {
+    html += '<div class="section-label label-none" style="margin-top:10px;">Not available ('+none.length+')</div>';
+    none.forEach(function(x){ html += mkCard(x,'no-match',''); });
+  }
+  document.getElementById('match-results').innerHTML = html;
+}
+
+function mkCard(x, cls, scoreCls) {
+  var c = x.c;
+  return '<div class="contractor-card '+cls+'">' +
+    '<div style="flex:1;">' +
+      '<div class="c-name">'+c.fn+' '+c.ln+(c.cr?' <span style="font-size:12px;font-weight:400;color:#888;">('+c.cr+')</span>':'')+'</div>' +
+      '<div class="c-meta">'+(c.roles&&c.roles.length?c.roles.join(', '):'No roles set')+'</div>' +
+      (x.dayOv&&x.dayOv.length?'<div class="c-overlap">Days match: '+x.dayOv.join(', ')+'</div>':
+       (x.c.days&&x.c.days.length?'<div class="c-avail">Contractor days: '+x.c.days.join(', ')+'</div>':''))+
+      (x.timeOv&&x.timeOv.length?'<div class="c-overlap">Times match: '+x.timeOv.join(', ')+'</div>':
+       (x.c.times&&x.c.times.length?'<div class="c-avail">Contractor times: '+x.c.times.join(', ')+'</div>':''))+
+      '<div class="c-avail">'+(c.co||'')+(c.mi?' &bull; travels up to '+c.mi+' miles':'')+' &bull; '+c.status+'</div>'+
+      (c.notes?'<div class="c-avail" style="font-style:italic;">'+c.notes+'</div>':'')+
+      '<div class="contact-links">' +
+        (c.ph?'<a href="tel:'+c.ph+'">'+c.ph+'</a>':'')+
+        (c.em?'<a href="mailto:'+c.em+'">'+c.em+'</a>':'')+
+      '</div>' +
+    '</div>' +
+    (x.score>0?'<div class="match-score '+scoreCls+'">'+x.score+'%</div>':'')+
+  '</div>';
+}
+
+function clearMatch() {
+  document.querySelectorAll('#m-days .tog, #m-times .tog').forEach(function(t){ t.classList.remove('on'); });
+  ['m-name','m-svc','m-loc','m-docket'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('match-results').innerHTML = '';
+}
+
+updateStats();
+</script>
+</body>
+</html>
